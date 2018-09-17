@@ -1,13 +1,14 @@
-using Admin.Api.Model;
+using Admin.Api.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Api.Data.DataContexts
 {
-    public class AdminDataContext : DbContext
+    public class AdminDataContext : IdentityDbContext<User>
     {
         public DbSet<Customer> Customers { get; set; }
-
-        public AdminDataContext(DbContextOptions<AdminDataContext> options)
+        
+        public AdminDataContext(DbContextOptions options)
             : base(options)
         {
 
@@ -22,6 +23,8 @@ namespace Admin.Api.Data.DataContexts
 
             modelBuilder.Entity<Note>()
                 .HasKey(o => o.Id);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

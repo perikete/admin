@@ -1,6 +1,6 @@
 using System;
 
-namespace Admin.Api.Model
+namespace Admin.Api.Data.Entities
 {
     public class Note : EntityBase
     {

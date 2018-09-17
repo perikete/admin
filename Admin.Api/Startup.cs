@@ -1,22 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Admin.Api.Core;
 using Admin.Api.Data.DataContexts;
+using Admin.Api.Data.Entities;
 using Admin.Api.Data.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Admin.Api
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -30,14 +38,7 @@ namespace Admin.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             ConfigureDataAccess(services);
-        }
-
-        private void ConfigureDataAccess(IServiceCollection services)
-        {
-            var connection = Configuration.GetConnectionString("admin");
-            services.AddDbContext<AdminDataContext>(options => options.UseSqlite(connection));
-
-            services.AddTransient<CustomerRepository>();
+            ConfigureJwt(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
