@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Admin.Api.Data.Entities;
 using Admin.Api.Data.Repositories;
-using Admin.Api.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Admin.Api.Controllers
