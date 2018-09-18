@@ -13,7 +13,6 @@ namespace Admin.Api
             var connection = Configuration.GetConnectionString ("admin");
             services.AddDbContext<AdminDataContext> (options => options.UseSqlite (connection));
 
-            services.AddTransient<UserRepository> ();
             services.AddTransient<CustomerRepository> ();
         }
     }
