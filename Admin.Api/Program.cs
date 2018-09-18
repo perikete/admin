@@ -14,6 +14,7 @@ namespace Admin.Api
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Starting server...");
             CreateWebHostBuilder(args).Build().Run();
         }
 

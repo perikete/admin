@@ -8,12 +8,13 @@ namespace Admin.Api
 {
     public partial class Startup
     {
-        private void ConfigureDataAccess(IServiceCollection services)
+        private void ConfigureDataAccess (IServiceCollection services)
         {
-            var connection = Configuration.GetConnectionString("admin");
-            services.AddDbContext<AdminDataContext>(options => options.UseSqlite(connection));
+            var connection = Configuration.GetConnectionString ("admin");
+            services.AddDbContext<AdminDataContext> (options => options.UseSqlite (connection));
 
-            services.AddTransient<CustomerRepository>();
+            services.AddTransient<UserRepository> ();
+            services.AddTransient<CustomerRepository> ();
         }
     }
 }

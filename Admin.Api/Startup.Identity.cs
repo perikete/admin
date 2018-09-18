@@ -1,88 +1,48 @@
 using System;
 using System.Text;
-using Admin.Api.Core;
-using Admin.Api.Data.DataContexts;
+using Admin.Api.Core.Extensions;
 using Admin.Api.Data.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Admin.Api
 {
     public partial class Startup
     {
-        private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure
-        private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
-
-        private void ConfigureJwt(IServiceCollection services)
+        private void ConfigureJwt (IServiceCollection services)
         {
-            services.AddSingleton<JwtFactory>();
+            // Add framework services.
+            services.AddTransient<SignInManager<User>> ();
+            services.AddTransient<UserManager<User>> ();
 
-
-            services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
-
-            // jwt wire up
-            // Get options from app settings
-            var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
-
-            // Configure JwtIssuerOptions
-            services.Configure<JwtIssuerOptions>(options =>
-            {
-                options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
-                options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
-                options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
-            });
+            var signingKey = new SymmetricSecurityKey (Encoding.ASCII.GetBytes (Configuration.GetKey ()));
 
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
-
-                ValidateAudience = true,
-                ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
-
+                RequireExpirationTime = true,
+                RequireSignedTokens = true,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = _signingKey,
-
-                RequireExpirationTime = false,
+                IssuerSigningKey = signingKey,
+                ValidateIssuer = true,
+                ValidIssuer = Configuration.GetIssuer (),
+                ValidateAudience = true,
+                ValidAudience = Configuration.GetAudience (),
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
 
-            services.AddAuthentication(options =>
+            services.AddAuthentication (options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            }).AddJwtBearer(configureOptions =>
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer (options =>
             {
-                configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
-                configureOptions.TokenValidationParameters = tokenValidationParameters;
-                configureOptions.SaveToken = true;
+                options.Audience = Configuration.GetAudience ();
+                options.ClaimsIssuer = Configuration.GetIssuer ();
+                options.TokenValidationParameters = tokenValidationParameters;
+                options.SaveToken = true;
             });
-
-            // api user claim policy
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ApiUser", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
-            });
-
-            // add identity
-            var builder = services.AddIdentityCore<User>(o =>
-            {
-                // configure identity options
-                o.Password.RequireDigit = false;
-                o.Password.RequireLowercase = false;
-                o.Password.RequireUppercase = false;
-                o.Password.RequireNonAlphanumeric = false;
-                o.Password.RequiredLength = 6;
-            });
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
-            builder.AddEntityFrameworkStores<AdminDataContext>().AddDefaultTokenProviders();
         }
-
     }
 }
