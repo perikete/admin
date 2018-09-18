@@ -8,6 +8,7 @@
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
+            "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/Admin.Api/bin/Debug/netcoreapp2.1/Admin.Api.dll",
             "args": [],

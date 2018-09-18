@@ -1,4 +1,5 @@
 using Admin.Api.Data.DataContexts;
+using Admin.Api.Data.Entities;
 using Admin.Api.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +13,7 @@ namespace Admin.Api
         {
             var connection = Configuration.GetConnectionString ("admin");
             services.AddDbContext<AdminDataContext> (options => options.UseSqlite (connection));
-
-            services.AddTransient<CustomerRepository> ();
+            services.AddTransient<IRepository<Customer>, CustomerRepository> ();
         }
     }
 }

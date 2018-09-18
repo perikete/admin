@@ -20,7 +20,7 @@ namespace Admin.Api.Controllers
             _customerRepository = customerRepository;
         }
 
-        [HttpPost("/")]
+        [HttpPost]
         public async Task<IActionResult> AddCustomer (CustomerModel customerModel)
         {
             if (ModelState.IsValid)
