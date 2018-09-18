@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using Admin.Api.Core.Extensions;
+using Admin.Api.Data.DataContexts;
 using Admin.Api.Data.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -43,6 +44,10 @@ namespace Admin.Api
                 options.TokenValidationParameters = tokenValidationParameters;
                 options.SaveToken = true;
             });
+
+            services.AddIdentityCore<User>()
+                .AddEntityFrameworkStores<AdminDataContext> ()
+                .AddDefaultTokenProviders ();
         }
     }
 }
