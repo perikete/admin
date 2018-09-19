@@ -36,56 +36,71 @@ namespace Admin.Api.Tests.Controllers
 
         [Theory]
         [AutoData]
-        public async void Can_remove_customer(int id, Customer customerToDelete)
+        public async void Can_remove_customer (int id, Customer customerToDelete)
         {
             var customerRepoMock = Fixture.Freeze<Mock<ICustomerRepository>> ();
-            customerRepoMock.Setup(o => o.GetByIdAsync(id)).ReturnsAsync(customerToDelete);
+            customerRepoMock.Setup (o => o.GetByIdAsync (id)).ReturnsAsync (customerToDelete);
             var sut = GetSut ();
 
-            var result = await sut.DeleteCustomer(id) as OkResult;
+            var result = await sut.DeleteCustomer (id) as OkResult;
 
-            Assert.IsType<OkResult>(result);
-            customerRepoMock.Verify(o => o.DeleteAsync(customerToDelete)); 
+            Assert.IsType<OkResult> (result);
+            customerRepoMock.Verify (o => o.DeleteAsync (customerToDelete));
         }
 
         [Theory]
         [AutoData]
-        public async void Should_return_error_when_deleting_invalid_customer(int id)
+        public async void Should_return_error_when_deleting_invalid_customer (int id)
         {
             var customerRepoMock = Fixture.Freeze<Mock<ICustomerRepository>> ();
-            customerRepoMock.Setup(o => o.GetByIdAsync(id)).ReturnsAsync((Customer)null);
+            customerRepoMock.Setup (o => o.GetByIdAsync (id)).ReturnsAsync ((Customer) null);
             var sut = GetSut ();
 
-            var result = await sut.DeleteCustomer(id) as BadRequestObjectResult;
+            var result = await sut.DeleteCustomer (id) as BadRequestObjectResult;
 
-            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<BadRequestObjectResult> (result);
         }
 
         [Theory]
         [AutoData]
-        public async void Can_get_all_customers(IEnumerable<Customer> customers)
+        public async void Can_get_all_customers (IEnumerable<Customer> customers)
         {
             var customerRepoMock = Fixture.Freeze<Mock<ICustomerRepository>> ();
-            customerRepoMock.Setup(o => o.GetAllAsync()).ReturnsAsync(customers);
+            customerRepoMock.Setup (o => o.GetAllAsync ()).ReturnsAsync (customers);
             var sut = GetSut ();
 
-            var result = await sut.GetCustomers() as IEnumerable<Customer>;
+            var result = await sut.GetCustomers () as IEnumerable<Customer>;
 
-            Assert.True(result.Count() > 0);
+            Assert.True (result.Count () > 0);
         }
 
         [Theory]
         [AutoData]
-        public async void Can_add_notes_to_customer(NoteModel note, int customerId, Customer customer)
+        public async void Can_add_notes_to_customer (AddNoteModel model, Customer customer)
         {
             var customerRepoMock = Fixture.Freeze<Mock<ICustomerRepository>> ();
-            customerRepoMock.Setup(o => o.GetByIdAsync(customerId)).ReturnsAsync(customer);
+            customerRepoMock.Setup (o => o.GetByIdAsync (model.CustomerId)).ReturnsAsync (customer);
             var sut = GetSut ();
 
-            var result = await sut.AddNote(customerId, note) as OkResult;
+            var result = await sut.AddNote (model) as OkResult;
 
-            customerRepoMock.Verify(o => o.AddNoteAsync(customer, It.Is<Note>(n => n.Text == note.Text)));
-            Assert.IsType<OkResult>(result);
+            customerRepoMock.Verify (o => o.AddNoteAsync (customer, It.Is<Note> (n => n.Text == model.Note.Text)));
+            Assert.IsType<OkResult> (result);
+        }
+
+        [Theory]
+        [AutoData]
+        public async void Can_change_status_to_customer (ChangeStatusModel model, Customer customer)
+        {
+            var customerRepoMock = Fixture.Freeze<Mock<ICustomerRepository>> ();
+            customerRepoMock.Setup (o => o.GetByIdAsync (model.CustomerId)).ReturnsAsync (customer);
+            var sut = GetSut ();
+
+            var result = await sut.UpdateStatus (model) as OkResult;
+            
+            Assert.IsType<OkResult> (result);
+            Assert.Equal(model.NewStatus, customer.Status);
+            customerRepoMock.Verify(o => o.SaveChangesAsync());
         }
     }
 }

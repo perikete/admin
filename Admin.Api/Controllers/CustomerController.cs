@@ -38,41 +38,56 @@ namespace Admin.Api.Controllers
 
                 await _customerRepository.AddAsync (newCustomer);
 
-                return Ok();
+                return Ok ();
             }
 
-            return BadRequest(ModelState);
+            return BadRequest (ModelState);
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteCustomer(int id)
+        public async Task<IActionResult> DeleteCustomer (int id)
         {
-            var customerToDelete = await _customerRepository.GetByIdAsync(id);
+            var customerToDelete = await _customerRepository.GetByIdAsync (id);
 
             if (customerToDelete == null)
-                return BadRequest("Invalid customer");
+                return BadRequest ("Invalid customer");
 
-            await _customerRepository.DeleteAsync(customerToDelete);
+            await _customerRepository.DeleteAsync (customerToDelete);
 
-            return Ok();
+            return Ok ();
         }
 
-        public async Task<IEnumerable<Customer>> GetCustomers()
+        [HttpGet]
+        public async Task<IEnumerable<Customer>> GetCustomers ()
         {
-            return await _customerRepository.GetAllAsync();
+            return await _customerRepository.GetAllAsync ();
         }
 
-        public async Task<IActionResult> AddNote(int customerId, NoteModel note)
+        [HttpPost ("note")]
+        public async Task<IActionResult> AddNote (AddNoteModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            var customer = await _customerRepository.GetByIdAsync(customerId);
-            var newNote = new Note { Text = note.Text, CreationDate = DateTime.Now };
-            await _customerRepository.AddNoteAsync(customer, newNote);
+                return BadRequest (ModelState);
 
+            var customer = await _customerRepository.GetByIdAsync (model.CustomerId);
+            var newNote = new Note { Text = model.Note.Text, CreationDate = DateTime.Now };
+            await _customerRepository.AddNoteAsync (customer, newNote);
 
-            return Ok();
+            return Ok ();
+        }
+
+        [HttpPost("UpdateStatus")]
+        public async Task<IActionResult> UpdateStatus (ChangeStatusModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest (ModelState);
+
+            var customer = await _customerRepository.GetByIdAsync (model.CustomerId);
+            customer.Status = model.NewStatus;
+
+            await _customerRepository.SaveChangesAsync ();
+
+            return Ok ();
         }
     }
 }

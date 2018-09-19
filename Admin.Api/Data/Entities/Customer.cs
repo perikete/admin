@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Admin.Api.Data.Entities
 {
@@ -10,6 +11,11 @@ namespace Admin.Api.Data.Entities
         public string Email { get; set; }
         public StatusEnum Status { get; set; }
 
-        public ICollection<Note> Notes { get; set; }
+        public virtual ICollection<Note> Notes { get; set; }
+
+        /*public Customer()
+        {
+            Notes = new Collection<Note>();
+        }*/
     }
 }

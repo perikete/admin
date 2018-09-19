@@ -26,26 +26,31 @@ namespace Admin.Api.Data.Repositories
 
         public async Task<IEnumerable<Customer>> GetAllAsync ()
         {
-            return await Customers.ToListAsync();
+            return await Customers.Include (o => o.Notes).ToListAsync ();
         }
 
-        public async Task<Customer> GetByIdAsync(int id)
+        public async Task<Customer> GetByIdAsync (int id)
         {
-            var all = await GetAllAsync();
-            return all.FirstOrDefault(o => o.Id == id);
+            var all = await GetAllAsync ();
+            return all.FirstOrDefault (o => o.Id == id);
         }
 
-        public async Task DeleteAsync(Customer entity)
+        public async Task DeleteAsync (Customer entity)
         {
-            Customers.Remove(entity);
+            Customers.Remove (entity);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync ();
         }
 
-        public async Task AddNoteAsync(Customer customer, Note newNote)
+        public async Task AddNoteAsync (Customer customer, Note newNote)
         {
-            customer.Notes.Add(newNote);
-            
+            customer.Notes.Add (newNote);
+
+            await _context.SaveChangesAsync ();
+        }
+
+        public async Task SaveChangesAsync()
+        {
             await _context.SaveChangesAsync();
         }
     }

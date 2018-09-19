@@ -9,5 +9,6 @@ namespace Admin.Api.Data.Repositories
          Task<IEnumerable<T>> GetAllAsync();
          Task<T> GetByIdAsync(int id);
          Task DeleteAsync(T entity);
+         Task SaveChangesAsync();
     }
 }
