@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Admin.Api.Data.DataContexts;
 using Admin.Api.Data.Entities;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Api.Data.Repositories
 {
-    public class CustomerRepository : IRepository<Customer>
+    public class CustomerRepository : ICustomerRepository
     {
         private AdminDataContext _context;
         private DbSet<Customer> Customers => _context.Customers;
@@ -23,10 +24,29 @@ namespace Admin.Api.Data.Repositories
             await _context.SaveChangesAsync ();
         }
 
-        public IEnumerable<Customer> GetAll ()
+        public async Task<IEnumerable<Customer>> GetAllAsync ()
         {
-            return Customers;
+            return await Customers.ToListAsync();
         }
 
+        public async Task<Customer> GetByIdAsync(int id)
+        {
+            var all = await GetAllAsync();
+            return all.FirstOrDefault(o => o.Id == id);
+        }
+
+        public async Task DeleteAsync(Customer entity)
+        {
+            Customers.Remove(entity);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddNoteAsync(Customer customer, Note newNote)
+        {
+            customer.Notes.Add(newNote);
+            
+            await _context.SaveChangesAsync();
+        }
     }
 }
