@@ -1,0 +1,19 @@
+<div *ngIf="customer | async; let customer; else loading">
+    <h2>{{customer.fullname}}</h2>
+    <dl>
+      <dt>Address:</dt>
+      <dd>{{customer.address}}</dd>
+  
+      <dt>Phone:</dt>
+      <dd>{{customer.phone}}</dd>
+  
+      <dt>Email:</dt>
+      <dd>{{customer.email}}</dd>
+  
+      <dt>Status:</dt>
+      <dd>{{ StatusEnum[customer.status]}}</dd>
+    </dl>
+
+    <button type="button" (click)="back()">Back</button>
+  </div>
+  <ng-template #loading>Loading User Data...</ng-template>

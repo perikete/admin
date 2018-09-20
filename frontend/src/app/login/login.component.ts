@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
         res => {
           setToken(res.token);
 
-          this._router.navigate(["/home"]);
+          this._router.navigate(["/customers"]);
         },
         error => {          
           this.errors = Object.values(error.error).join(',')

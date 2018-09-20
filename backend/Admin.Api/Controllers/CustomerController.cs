@@ -57,6 +57,12 @@ namespace Admin.Api.Controllers
             return Ok ();
         }
 
+        [HttpGet("{id}")]
+        public async Task<Customer> GetCustomer(int id)
+        {
+            return await _customerRepository.GetByIdAsync(id);
+        }
+
         [HttpGet]
         public async Task<IEnumerable<Customer>> GetCustomers ()
         {

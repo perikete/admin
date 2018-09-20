@@ -1,4 +1,5 @@
 export default class Customer {
+  public id: number;
   public fullname: string;
   public address: string;
   public phone: string;

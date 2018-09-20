@@ -76,6 +76,21 @@ namespace Admin.Api.Tests.Controllers
 
         [Theory]
         [AutoData]
+        public async void Can_get_customer_by_id (int id)
+        {
+            var customer = new Customer { Id = id };
+            var customerRepoMock = Fixture.Freeze<Mock<ICustomerRepository>> ();
+
+            customerRepoMock.Setup (o => o.GetByIdAsync (id)).ReturnsAsync (customer);
+            var sut = GetSut ();
+
+            var result = await sut.GetCustomer (id) as Customer;
+
+            Assert.Equal (customer.Id, id);
+        }
+
+        [Theory]
+        [AutoData]
         public async void Can_add_notes_to_customer (AddNoteModel model, Customer customer)
         {
             var customerRepoMock = Fixture.Freeze<Mock<ICustomerRepository>> ();
@@ -97,10 +112,10 @@ namespace Admin.Api.Tests.Controllers
             var sut = GetSut ();
 
             var result = await sut.UpdateStatus (model) as OkResult;
-            
+
             Assert.IsType<OkResult> (result);
-            Assert.Equal(model.NewStatus, customer.Status);
-            customerRepoMock.Verify(o => o.SaveChangesAsync());
+            Assert.Equal (model.NewStatus, customer.Status);
+            customerRepoMock.Verify (o => o.SaveChangesAsync ());
         }
     }
 }
