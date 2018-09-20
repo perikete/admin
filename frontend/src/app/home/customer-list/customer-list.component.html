@@ -1,0 +1,31 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr 
+      *ngFor="let customer of customers | async">
+      <td>
+        {{ customer.fullname }}
+      </td>
+      <td>
+        {{ customer.address }}
+      </td>
+      <td>
+        {{ customer.email }}
+      </td>
+      <td>
+        {{ customer.phone }}
+      </td>
+      <td>
+        {{ StatusEnum[customer.status] }}
+      </td>
+    </tr>
+  </tbody>
+</table>
