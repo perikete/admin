@@ -1,27 +1,21 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { AuthResponse } from './auth-response';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { AuthResponse } from "./auth-response";
+import { setToken, removeToken } from "../core/local-storage.util";
+import { Subscription, Observable } from "rxjs";
 
 @Injectable()
 export class AuthService {
+  constructor(private _http: HttpClient) {}
 
-  constructor(private http: HttpClient) {
+  public login(username: string, password: string): Observable<AuthResponse> {
+    return this._http.post<AuthResponse>("/api/account/authenticate", {
+      username,
+      password
+    });
+  }  
 
+  public logout(): void {
+    removeToken();
   }
-
-  login(email: string, password: string ) {
-      return this.http.post<AuthResponse>('/api/authenticate', {email, password})
-        .subscribe(this.setSession);
-  }
-
-  private setSession(authResult: AuthResponse) {
-
-      localStorage.setItem('token', authResult.token);
-  }
-
-  logout() {
-      localStorage.removeItem("token");
-  }
-
-
 }

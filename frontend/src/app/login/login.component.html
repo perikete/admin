@@ -1,10 +1,14 @@
-<form (ngSubmit)="login()">
+<form 
+    name="login-form" 
+    (ngSubmit)="login()">
     <div>
         <div>
             Username:
         </div>
         <div>
-            <input type="text"
+            <input 
+                name="username" 
+                type="text" 
                 [(ngModel)]="username" />
         </div>
 
@@ -12,9 +16,21 @@
             Password:
         </div>
         <div>
-            <input type="text"
-                [(ngModel)]="password"
+            <input 
+                name="passowrd" 
+                type="text" 
+                [(ngModel)]="password" 
                 type="password" />
+        </div>
+
+        <div>
+            {{ errors }}
+        </div>
+
+        <div>           
+            <button 
+                type="submit">Login</button>      
+           
         </div>
     </div>
 
